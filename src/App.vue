@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { CheckCircleIcon } from '@heroicons/vue/24/solid'
+import TheHeader from './components/TheHeader.vue'
+import TheNav from './components/TheNav.vue'
+import TheTimeline from './pages/TheTimeline.vue'
+import TheActivities from './pages/TheActivities.vue'
+import TheProgress from './pages/TheProgress.vue'
+import { ref } from 'vue'
+import { PAGE_TIMELINE, PAGE_ACTIVITIES, PAGE_PROGRESS } from './constants.ts'
+import { normalizePageHash } from './functions.ts'
+
+const goTo = (page: string) => {
+  currentPage.value = page
+}
+
+const currentPage = ref(normalizePageHash())
 </script>
 
 <template>
-  <header
-    class="sticky top-0 z-20 flex items-center justify-between border-b bg-white p-3"
-  >
-    <a href="#">
-      <img src="./assets/img/logo.png" alt="logo" class="h-9" />
-    </a>
-    <a href="#" class="text-sm">
-      <div v-if="true" class="flex gap-2 items-center">
-        Day complete!
-        <CheckCircleIcon class="h-7 w-7 text-green-500" />
-      </div>
-      <div v-else class="flex items-center gap-2">
-        <div>Progress <span class="font-mono">20%</span></div>
-        <div class="h-3 w-3 rounded-full bg-red-500"></div>
-      </div>
-    </a>
-  </header>
+  <TheHeader
+    @go-to-timeline="goTo(PAGE_TIMELINE)"
+    @go-to-progress="goTo(PAGE_PROGRESS)"
+  />
+
+  <main class="flex flex-grow flex-col">
+    <TheTimeline v-show="currentPage === PAGE_TIMELINE" />
+    <TheActivities v-show="currentPage === PAGE_ACTIVITIES" />
+    <TheProgress v-show="currentPage === PAGE_PROGRESS" />
+  </main>
+
+  <TheNav :current-page="currentPage" @navigate="goTo($event)" />
 </template>
 
 <style scoped></style>
