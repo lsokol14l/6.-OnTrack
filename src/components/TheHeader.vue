@@ -2,16 +2,20 @@
   <header
     class="sticky top-0 z-20 flex items-center justify-between border-b bg-white p-3"
   >
-    <TheLogo @click="emit('goToTimeline')" />
-    <TheHeaderProgress @click="emit('goToProgress')" />
+    <TheLogo @click="emit('navigate', PAGE_TIMELINE)" />
+    <TheHeaderProgress @click="emit('navigate', PAGE_PROGRESS)" />
   </header>
 </template>
 
 <script setup lang="ts">
 import TheLogo from './TheLogo.vue'
 import TheHeaderProgress from './TheHeaderProgress.vue'
+import { PAGE_TIMELINE, PAGE_PROGRESS } from '../constants.ts'
+import { isPageValid } from '../validators.ts'
 
-const emit = defineEmits(['goToTimeline', 'goToProgress'])
+const emit = defineEmits({
+  navigate: isPageValid
+})
 </script>
 
 <style scoped></style>
