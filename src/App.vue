@@ -6,7 +6,13 @@ import TheActivities from './pages/TheActivities.vue'
 import TheProgress from './pages/TheProgress.vue'
 import { ref } from 'vue'
 import { PAGE_TIMELINE, PAGE_ACTIVITIES, PAGE_PROGRESS } from './constants.ts'
-import { normalizePageHash, generateTimelineItems } from './functions.ts'
+import {
+  normalizePageHash,
+  generateTimelineItems,
+  generateSelectOptions,
+  generateActivities,
+  id
+} from './functions.ts'
 
 const goTo = (page: string) => {
   currentPage.value = page
@@ -15,6 +21,22 @@ const goTo = (page: string) => {
 const timelineItems = generateTimelineItems()
 
 const currentPage = ref(normalizePageHash())
+
+const activities = ref(generateActivities())
+
+const activitySelectOptions = generateSelectOptions(activities.value)
+
+const deleteActivity = (activity: string) => {
+  activities.value.splice(activities.value.indexOf(activity), 1)
+}
+
+const createActivity = (name: string) => {
+  activities.value.push({
+    name,
+    id: id(),
+    secondsToComplete: 0
+  })
+}
 </script>
 
 <template>
@@ -24,8 +46,14 @@ const currentPage = ref(normalizePageHash())
     <TheTimeline
       v-show="currentPage === PAGE_TIMELINE"
       :timeline-items="timelineItems"
+      :activity-select-options="activitySelectOptions"
     />
-    <TheActivities v-show="currentPage === PAGE_ACTIVITIES" />
+    <TheActivities
+      v-show="currentPage === PAGE_ACTIVITIES"
+      :activities="activities"
+      @delete-activity="deleteActivity($event)"
+      @create-activity="createActivity($event)"
+    />
     <TheProgress v-show="currentPage === PAGE_PROGRESS" />
   </main>
 
